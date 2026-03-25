@@ -13,44 +13,38 @@ Usage rule:
   Cargo.toml
   rust-toolchain.toml
   .cargo/config.toml
-  kernel/
-    Cargo.toml
-    linker.ld
-    src/
-      lib.rs
-      arch/riscv64/
-        mod.rs
-        start.S
-        trap.S
-        switch.S
-        csr.rs
-      mm/
-        mod.rs
-        addr.rs
-        frame.rs
-        page_table.rs
-      trap/
-        mod.rs
-        syscall.rs
-      proc/
-        mod.rs
-        task.rs
-        sched.rs
-      fs/
-        mod.rs
-        file.rs
-        inode.rs
-        pipe.rs
-      drivers/
-        mod.rs
-        uart.rs
-  user/
-    Cargo.toml
-    src/bin/
-      init.rs
-  xtask/
-    Cargo.toml
-    src/main.rs
+  linker.ld
+  src/
+    lib.rs
+    arch/riscv64/
+      mod.rs
+      start.S
+      trap.S
+      switch.S
+      csr.rs
+    mm/
+      mod.rs
+      addr.rs
+      frame.rs
+      page_table.rs
+    trap/
+      mod.rs
+      syscall.rs
+    proc/
+      mod.rs
+      task.rs
+      sched.rs
+    fs/
+      mod.rs
+      file.rs
+      inode.rs
+      pipe.rs
+    drivers/
+      mod.rs
+      uart.rs
+  scripts/
+    run.sh
+    debug.sh
 ```
 
 ## Critical Control Flow Diagram (Syscall Path)
@@ -174,19 +168,19 @@ File targets:
 - `/home/khanh/Projects/miusOS/.cargo/config.toml`
 
 Tasks:
-1. Add workspace members (`kernel`, `user`, `xtask`) and panic strategy.
+1. Define root package metadata and panic strategy.
 2. Pin nightly toolchain.
 3. Configure riscv target and linker script flags.
 
 Done when:
-- workspace metadata resolves
-- kernel crate compiles for riscv target
+- package metadata resolves
+- root crate compiles for riscv target
 
-## 2. Kernel Crate Skeleton
+## 2. Root Crate Skeleton
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/Cargo.toml`
-- `/home/khanh/Projects/miusOS/kernel/src/lib.rs`
-- `/home/khanh/Projects/miusOS/kernel/linker.ld`
+- `/home/khanh/Projects/miusOS/Cargo.toml`
+- `/home/khanh/Projects/miusOS/src/lib.rs`
+- `/home/khanh/Projects/miusOS/linker.ld`
 
 Tasks:
 1. Set `#![no_std]` and `#![no_main]` where applicable.
@@ -199,9 +193,9 @@ Done when:
 
 ## 3. Startup and Early Boot
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/start.S`
-- `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/mod.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/drivers/uart.rs`
+- `/home/khanh/Projects/miusOS/src/arch/riscv64/start.S`
+- `/home/khanh/Projects/miusOS/src/arch/riscv64/mod.rs`
+- `/home/khanh/Projects/miusOS/src/drivers/uart.rs`
 
 Tasks:
 1. Setup per-hart stacks and call `rust_main`.
@@ -215,10 +209,10 @@ Done when:
 
 ## 4. MM Base and Paging
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/mm/addr.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/mm/frame.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/mm/page_table.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/csr.rs`
+- `/home/khanh/Projects/miusOS/src/mm/addr.rs`
+- `/home/khanh/Projects/miusOS/src/mm/frame.rs`
+- `/home/khanh/Projects/miusOS/src/mm/page_table.rs`
+- `/home/khanh/Projects/miusOS/src/arch/riscv64/csr.rs`
 
 Tasks:
 1. Implement address wrappers and page helper functions.
@@ -232,9 +226,9 @@ Done when:
 
 ## 5. Trap Path and Syscalls
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/trap.S`
-- `/home/khanh/Projects/miusOS/kernel/src/trap/mod.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/trap/syscall.rs`
+- `/home/khanh/Projects/miusOS/src/arch/riscv64/trap.S`
+- `/home/khanh/Projects/miusOS/src/trap/mod.rs`
+- `/home/khanh/Projects/miusOS/src/trap/syscall.rs`
 
 Tasks:
 1. Define trapframe layout in Rust (`#[repr(C)]`).
@@ -249,9 +243,9 @@ Done when:
 
 ## 6. Process and Scheduler
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/proc/task.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/proc/sched.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/switch.S`
+- `/home/khanh/Projects/miusOS/src/proc/task.rs`
+- `/home/khanh/Projects/miusOS/src/proc/sched.rs`
+- `/home/khanh/Projects/miusOS/src/arch/riscv64/switch.S`
 
 Tasks:
 1. Define task states and enforce valid transitions.
@@ -266,10 +260,10 @@ Done when:
 
 ## 7. Exec Implementation
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/trap/syscall.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/proc/task.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/mm/page_table.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/fs/inode.rs`
+- `/home/khanh/Projects/miusOS/src/trap/syscall.rs`
+- `/home/khanh/Projects/miusOS/src/proc/task.rs`
+- `/home/khanh/Projects/miusOS/src/mm/page_table.rs`
+- `/home/khanh/Projects/miusOS/src/fs/inode.rs`
 
 Tasks:
 1. Copy `path` and `argv` from user to kernel buffers with strict limits.
@@ -284,9 +278,9 @@ Done when:
 
 ## 8. FD, FS, and Pipe
 File targets:
-- `/home/khanh/Projects/miusOS/kernel/src/fs/file.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/fs/inode.rs`
-- `/home/khanh/Projects/miusOS/kernel/src/fs/pipe.rs`
+- `/home/khanh/Projects/miusOS/src/fs/file.rs`
+- `/home/khanh/Projects/miusOS/src/fs/inode.rs`
+- `/home/khanh/Projects/miusOS/src/fs/pipe.rs`
 
 Tasks:
 1. Implement fd table (`NOFILE`, lowest-free allocation).
@@ -299,9 +293,9 @@ Done when:
 - file and pipe smoke tests pass
 - EOF and broken-pipe semantics are verified
 
-## 9. Xtask and Operational Workflow
+## 9. Operational Workflow Tooling
 File targets:
-- `/home/khanh/Projects/miusOS/xtask/src/main.rs`
+- optional `/home/khanh/Projects/miusOS/tools/xtask/src/main.rs`
 - optional `/home/khanh/Projects/miusOS/scripts/*.sh`
 
 Tasks:

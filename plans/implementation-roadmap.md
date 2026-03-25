@@ -65,7 +65,7 @@ Common failure mode:
 Linked curriculum: 02, 03
 
 Objective:
-- Produce a reproducible Rust cross-build and a clean workspace layout.
+- Produce a reproducible Rust cross-build and a clean module-based layout.
 
 Entry requirements:
 - Stage 0 completed.
@@ -77,20 +77,23 @@ Implementation tasks:
    - `/home/khanh/Projects/miusOS/Cargo.toml`
    - `/home/khanh/Projects/miusOS/rust-toolchain.toml`
    - `/home/khanh/Projects/miusOS/.cargo/config.toml`
-4. Create crates/directories:
-   - `/home/khanh/Projects/miusOS/kernel/`
-   - `/home/khanh/Projects/miusOS/user/`
-   - `/home/khanh/Projects/miusOS/xtask/`
+4. Create root module directories:
+   - `/home/khanh/Projects/miusOS/src/arch/`
+   - `/home/khanh/Projects/miusOS/src/mm/`
+   - `/home/khanh/Projects/miusOS/src/trap/`
+   - `/home/khanh/Projects/miusOS/src/proc/`
+   - `/home/khanh/Projects/miusOS/src/fs/`
+   - `/home/khanh/Projects/miusOS/src/drivers/`
 5. Add linker script at:
-   - `/home/khanh/Projects/miusOS/kernel/linker.ld`
+   - `/home/khanh/Projects/miusOS/linker.ld`
 
 Expected outputs:
-- cross-target build command succeeds for kernel crate.
-- workspace members resolve correctly.
+- cross-target build command succeeds for root crate.
+- module directories resolve and compile from `src/lib.rs`.
 
 Verification commands:
 ```bash
-cargo build -p kernel --target riscv64gc-unknown-none-elf
+cargo build --target riscv64gc-unknown-none-elf
 rustup target list --installed | rg riscv64gc-unknown-none-elf
 qemu-system-riscv64 --version
 ```
@@ -116,7 +119,7 @@ Entry requirements:
 
 Implementation tasks:
 1. Add startup assembly:
-   - `/home/khanh/Projects/miusOS/kernel/src/arch/riscv64/start.S`
+   - `/home/khanh/Projects/miusOS/src/arch/riscv64/start.S`
 2. Define `_start` responsibilities:
    - preserve `a0`/`a1`
    - setup per-hart stack
@@ -127,7 +130,7 @@ Implementation tasks:
    - panic handler with UART output
    - `.bss` clear helper
 4. Add UART driver:
-   - `/home/khanh/Projects/miusOS/kernel/src/drivers/uart.rs`
+   - `/home/khanh/Projects/miusOS/src/drivers/uart.rs`
 5. Implement deterministic init order in `rust_main`.
 
 Expected outputs:
@@ -271,7 +274,7 @@ Entry requirements:
 - Stage 5 complete.
 
 Implementation tasks:
-1. Implement `xtask` commands:
+1. Implement repeatable run commands in scripts or a helper crate:
    - `build`, `run`, `debug`, `test-smoke`
 2. Add deterministic smoke tests for:
    - boot

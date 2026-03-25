@@ -8,7 +8,7 @@ Audience:
 
 Current repository state (as of this document):
 - The repository currently contains curriculum docs under `docs/`.
-- The kernel/workspace code does not exist yet.
+- The codebase now uses a single root crate with module folders under `src/`.
 - This planning set explains what to create, in what order, and how to verify each step.
 
 ## How to Read This Folder
@@ -36,11 +36,10 @@ Host Machine (Linux/WSL)
 +---------------------------------------------------------------+
 | Rust Workspace (to be created)                                |
 |                                                               |
-|  root Cargo workspace                                         |
-|   |- kernel/   (no_std kernel code + asm glue)               |
-|   |- user/     (user binaries, syscall stubs)                |
-|   |- xtask/    (developer command runner)                    |
-|   `- scripts/  (optional helper shell scripts)               |
+|  root Cargo package (`miusos`)                               |
+|   |- src/arch, src/mm, src/trap, src/proc, src/fs           |
+|   |- src/drivers (UART and later devices)                    |
+|   `- scripts/ (optional helper shell scripts)                |
 +---------------------------------------------------------------+
   |
   | ELF/BIN kernel image

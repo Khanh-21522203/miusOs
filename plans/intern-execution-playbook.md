@@ -48,11 +48,11 @@ Suggested sequence:
 1. verify host tools
 2. configure Rust target
 3. create workspace manifests
-4. scaffold kernel/user/xtask crates
+4. scaffold root module folders under `src/`
 5. run first cross-build
 
 Evidence required:
-- output of `cargo build -p kernel --target riscv64gc-unknown-none-elf`
+- output of `cargo build --target riscv64gc-unknown-none-elf`
 - list of created top-level files and folders
 
 Common blockers:
@@ -175,7 +175,7 @@ Avoid vague updates like:
 - "something wrong with memory"
 
 Use specific updates like:
-- "After enabling SATP in `kernel/src/mm/page_table.rs`, first fault is `scause=...` at `sepc=...`."
+- "After enabling SATP in `src/mm/page_table.rs`, first fault is `scause=...` at `sepc=...`."
 
 ## Personal Quality Bar
 Before marking any task done, ask:
