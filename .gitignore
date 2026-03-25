@@ -1,0 +1,27 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+
+# Kernel/OS build outputs
+/build/
+*.elf
+*.bin
+*.img
+*.map
+*.dump
+*.dis
+
+# Emulator/debug logs
+qemu.log
+gdb.log
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
